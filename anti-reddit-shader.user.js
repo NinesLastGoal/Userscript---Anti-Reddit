@@ -186,33 +186,139 @@
                 }
                 
                 .message-overlay {
-                    background: rgba(0, 0, 0, 0.8);
-                    color: white;
-                    padding: 30px 50px;
-                    border-radius: 15px;
+                    background: rgba(0, 0, 0, 0.9);
+                    color: #00ff41;
+                    padding: 40px 60px;
+                    border-radius: 0;
                     text-align: center;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+                    box-shadow: 
+                        0 0 20px rgba(0, 255, 65, 0.5),
+                        inset 0 0 20px rgba(0, 255, 65, 0.1),
+                        0 0 40px rgba(0, 255, 65, 0.3);
                     backdrop-filter: blur(10px);
-                    border: 2px solid rgba(255, 255, 255, 0.2);
+                    border: 2px solid #00ff41;
                     z-index: 10;
                     position: relative;
+                    transform: perspective(1000px) rotateX(5deg);
+                    animation: cyberpunkGlow 2s ease-in-out infinite alternate;
+                }
+                
+                .message-overlay::before {
+                    content: '';
+                    position: absolute;
+                    top: -2px;
+                    left: -2px;
+                    right: -2px;
+                    bottom: -2px;
+                    background: linear-gradient(45deg, #00ff41, #ff0080, #00ff41);
+                    z-index: -1;
+                    animation: borderFlow 3s linear infinite;
+                }
+                
+                .message-overlay::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: 
+                        repeating-linear-gradient(
+                            0deg,
+                            transparent,
+                            transparent 2px,
+                            rgba(0, 255, 65, 0.03) 2px,
+                            rgba(0, 255, 65, 0.03) 4px
+                        );
+                    pointer-events: none;
+                    animation: scanlines 0.1s linear infinite;
                 }
                 
                 .message-overlay h1 {
                     margin: 0;
-                    font-size: 3em;
-                    font-weight: bold;
-                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-                    letter-spacing: 2px;
+                    font-size: 3.5em;
+                    font-weight: 300;
+                    font-family: 'Courier New', monospace;
+                    text-shadow: 
+                        0 0 5px #00ff41,
+                        0 0 10px #00ff41,
+                        0 0 15px #00ff41,
+                        0 0 20px #00ff41,
+                        0 0 35px #00ff41,
+                        0 0 40px #00ff41;
+                    letter-spacing: 4px;
+                    text-transform: uppercase;
+                    animation: textFlicker 0.5s ease-in-out infinite alternate;
+                }
+                
+                @keyframes cyberpunkGlow {
+                    0% { 
+                        box-shadow: 
+                            0 0 20px rgba(0, 255, 65, 0.5),
+                            inset 0 0 20px rgba(0, 255, 65, 0.1),
+                            0 0 40px rgba(0, 255, 65, 0.3);
+                    }
+                    100% { 
+                        box-shadow: 
+                            0 0 30px rgba(0, 255, 65, 0.8),
+                            inset 0 0 30px rgba(0, 255, 65, 0.2),
+                            0 0 60px rgba(0, 255, 65, 0.5);
+                    }
+                }
+                
+                @keyframes borderFlow {
+                    0% { background-position: 0% 0%; }
+                    100% { background-position: 100% 100%; }
+                }
+                
+                @keyframes scanlines {
+                    0% { transform: translateY(0); }
+                    100% { transform: translateY(4px); }
+                }
+                
+                @keyframes textFlicker {
+                    0% { 
+                        opacity: 1;
+                        text-shadow: 
+                            0 0 5px #00ff41,
+                            0 0 10px #00ff41,
+                            0 0 15px #00ff41,
+                            0 0 20px #00ff41,
+                            0 0 35px #00ff41,
+                            0 0 40px #00ff41;
+                    }
+                    100% { 
+                        opacity: 0.8;
+                        text-shadow: 
+                            0 0 2px #00ff41,
+                            0 0 8px #00ff41,
+                            0 0 12px #00ff41,
+                            0 0 16px #00ff41,
+                            0 0 30px #00ff41,
+                            0 0 35px #00ff41;
+                    }
                 }
                 
                 @media (max-width: 768px) {
                     .message-overlay h1 {
-                        font-size: 2em;
+                        font-size: 2.5em;
+                        letter-spacing: 2px;
                     }
                     .message-overlay {
-                        padding: 20px 30px;
+                        padding: 30px 40px;
                         margin: 20px;
+                        transform: perspective(800px) rotateX(3deg);
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .message-overlay h1 {
+                        font-size: 2em;
+                        letter-spacing: 1px;
+                    }
+                    .message-overlay {
+                        padding: 25px 35px;
+                        margin: 15px;
                     }
                 }
             </style>
