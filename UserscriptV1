@@ -1,0 +1,23 @@
+// ==UserScript==
+// @name         Reddit - Go Back to Work
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Replaces the Reddit page with a simple "go back to work" message.
+// @author       Your Name
+// @match        *://*.reddit.com/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    document.documentElement.innerHTML = `
+        <head>
+            <title>Productivity</title>
+        </head>
+        <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; background-color: #f2f2f2;">
+            <h1 style="color: #333;">go back to work</h1>
+        </body>
+    `;
+})();
