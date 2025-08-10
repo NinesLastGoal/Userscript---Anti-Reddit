@@ -1,47 +1,174 @@
 // ==UserScript==
-// @name         Anti-Reddit Shader
-// @namespace    http://tampermonkey.net/
-// @version      3.0
-// @description  Replaces Reddit with an animated WebGL shader background and productivity reminder
-// @author       Your Name
+// @name         Nazarick WebGL Guardian Shader (Supreme Edition)
+// @namespace    https://github.com/NinesLastGoal
+// @version      1.1
+// @description  WebGL-empowered abyss, infused with Nazarick's guardians and Demiurge's wrath. No Reddit shall sully thy vision.
+// @author       Your Overlord (and Albedo, your loyal guardian)
 // @match        *://*.reddit.com/*
-// @grant        none
 // @run-at       document-start
+// @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    // Fragment shader source - adapted from the ShaderToy example
+    // Fragment shader source - Nazarick Guardian-themed shader with all Floor Guardians
     const fragmentShaderSource = `
-        precision mediump float;
+        precision highp float;
         uniform float u_time;
         uniform vec2 u_resolution;
         
+        // Noise function for organic patterns
+        float noise(vec2 p) {
+            return sin(p.x * 10.0) * sin(p.y * 10.0);
+        }
+        
+        // Improved noise for complex patterns
+        float fbm(vec2 p) {
+            float value = 0.0;
+            float amplitude = 0.5;
+            float frequency = 1.0;
+            for(int i = 0; i < 5; i++) {
+                value += amplitude * sin(frequency * p.x) * sin(frequency * p.y);
+                amplitude *= 0.5;
+                frequency *= 2.0;
+            }
+            return value;
+        }
+        
+        // Rose pattern for Shalltear
+        float rose(vec2 p, float time) {
+            float r = length(p);
+            float a = atan(p.y, p.x);
+            float petals = sin(6.0 * a + time) * 0.3 + 0.7;
+            return smoothstep(petals * 0.4, petals * 0.5, r);
+        }
+        
+        // Crystalline pattern for Cocytus
+        float crystal(vec2 p, float time) {
+            vec2 hexCoord = p * 8.0;
+            vec2 hexCenter = floor(hexCoord) + 0.5;
+            vec2 hexLocal = hexCoord - hexCenter;
+            float hexDist = max(abs(hexLocal.x), abs(hexLocal.y * 0.866 + hexLocal.x * 0.5));
+            return step(0.3 + 0.1 * sin(time * 2.0), hexDist);
+        }
+        
+        // Organic patterns for Aura & Mare
+        float organic(vec2 p, float time) {
+            vec2 q = p * 4.0;
+            q.x += sin(time + q.y * 2.0) * 0.3;
+            q.y += cos(time + q.x * 1.5) * 0.2;
+            return smoothstep(0.3, 0.7, fbm(q + time * 0.5));
+        }
+        
+        // Noble geometric pattern for Sebas
+        float noble(vec2 p, float time) {
+            vec2 grid = abs(fract(p * 6.0) - 0.5);
+            float pattern = min(grid.x, grid.y);
+            return smoothstep(0.1, 0.2, pattern) * (0.8 + 0.2 * sin(time * 3.0));
+        }
+        
+        // Shifting liquid pattern for Pandora's Actor
+        float liquid(vec2 p, float time) {
+            vec2 q = p * 3.0;
+            q.x += sin(time * 2.0 + q.y * 4.0) * 0.4;
+            q.y += cos(time * 1.5 + q.x * 3.0) * 0.3;
+            float ripple = sin(length(q) * 8.0 - time * 4.0) * 0.5 + 0.5;
+            return ripple;
+        }
+        
+        // Infernal flames for Demiurge
+        float infernal(vec2 p, float time) {
+            vec2 flameCoord = p;
+            flameCoord.y += time * 0.5;
+            flameCoord.x += sin(flameCoord.y * 6.0 + time * 2.0) * 0.2;
+            float flame = sin(flameCoord.y * 10.0) * sin(flameCoord.x * 8.0);
+            flame += sin(flameCoord.y * 15.0 + time * 3.0) * 0.5;
+            return smoothstep(0.3, 0.8, flame);
+        }
+        
+        // Clockwork patterns for floors
+        float clockwork(vec2 p, float time) {
+            float gear1 = step(0.4, sin(length(p * 12.0) + time * 2.0));
+            float gear2 = step(0.3, sin(length(p * 8.0) - time * 1.5));
+            return max(gear1, gear2) * 0.3;
+        }
+        
+        // Albedo's angelic pattern - always visible, serene and protective
+        float albedo(vec2 p, float time) {
+            float r = length(p);
+            float a = atan(p.y, p.x);
+            // Wing-like patterns
+            float wings = sin(6.0 * a + time * 0.5) * 0.1 + 0.9;
+            wings *= smoothstep(0.8, 0.4, r);
+            // Gentle radiance
+            float radiance = 1.0 - smoothstep(0.0, 1.2, r);
+            radiance *= 0.7 + 0.3 * sin(time * 0.8);
+            return max(wings, radiance * 0.6);
+        }
+        
         void main() {
             vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.y, u_resolution.x);
+            float time = u_time * 0.3;
             
-            float time = u_time * 0.5;
+            // Create different regions for each Guardian
+            vec2 p1 = uv + vec2(sin(time * 0.7), cos(time * 0.5)) * 0.3; // Shalltear region
+            vec2 p2 = uv + vec2(cos(time * 0.8), sin(time * 0.6)) * 0.4; // Cocytus region
+            vec2 p3 = uv + vec2(sin(time * 0.5) * 0.2, cos(time * 0.9) * 0.3); // Aura & Mare region
+            vec2 p4 = uv + vec2(cos(time * 0.6) * 0.25, sin(time * 0.7) * 0.2); // Sebas region
+            vec2 p5 = uv + vec2(sin(time * 1.2) * 0.4, cos(time * 1.1) * 0.35); // Pandora's Actor region
+            vec2 p6 = uv + vec2(sin(time * 0.9) * 0.3, cos(time * 0.8) * 0.4); // Demiurge region
             
-            // Create flowing pattern
-            vec2 p = uv;
-            p.x += sin(time * 0.7 + uv.y * 4.0) * 0.1;
-            p.y += cos(time * 0.5 + uv.x * 3.0) * 0.1;
+            // Calculate Guardian patterns
+            float shalltearPattern = rose(p1, time) * (0.7 + 0.3 * sin(time * 2.0));
+            float cocytusPattern = crystal(p2, time) * (0.8 + 0.2 * cos(time * 1.5));
+            float auraPattern = organic(p3, time) * (0.6 + 0.4 * sin(time * 1.8));
+            float sebasPattern = noble(p4, time);
+            float pandoraPattern = liquid(p5, time) * (0.9 + 0.1 * sin(time * 3.0));
+            float demiurgePattern = infernal(p6, time) * (0.8 + 0.2 * sin(time * 4.0));
+            float clockworkPattern = clockwork(uv, time);
             
-            // Multiple layers of sine waves
-            float pattern = sin(p.x * 8.0 + time) * sin(p.y * 6.0 + time * 1.3);
-            pattern += sin(p.x * 12.0 - time * 0.8) * sin(p.y * 10.0 - time * 0.6) * 0.5;
-            pattern += sin(length(p) * 15.0 + time * 2.0) * 0.3;
+            // Albedo's protective presence - always visible in center
+            float albedoPattern = albedo(uv * 0.7, time);
             
-            // Color gradient
-            vec3 color1 = vec3(0.2, 0.1, 0.5);  // Dark purple
-            vec3 color2 = vec3(0.8, 0.3, 0.6);  // Pink
-            vec3 color3 = vec3(0.1, 0.4, 0.8);  // Blue
+            // Guardian colors
+            vec3 shalltearColor = vec3(0.8, 0.1, 0.2) * shalltearPattern; // Crimson
+            vec3 cocytusColor = vec3(0.1, 0.4, 0.9) * cocytusPattern; // Icy blue
+            vec3 auraColor = vec3(0.2, 0.7, 0.3) * auraPattern; // Earthy green
+            vec3 sebasColor = vec3(0.7, 0.7, 0.8) * sebasPattern; // Noble silver
+            vec3 pandoraColor = vec3(0.9, 0.8, 0.2) * pandoraPattern; // Liquid gold
+            vec3 demiurgeColor = vec3(0.9, 0.3, 0.1) * demiurgePattern; // Infernal red
+            vec3 clockworkColor = vec3(0.5, 0.4, 0.3) * clockworkPattern; // Brass
             
-            vec3 color = mix(color1, color2, pattern * 0.5 + 0.5);
-            color = mix(color, color3, sin(time + length(uv)) * 0.3 + 0.3);
+            // Albedo's radiant white/gold - always visible
+            vec3 albedoColor = vec3(0.95, 0.9, 0.7) * albedoPattern;
             
-            gl_FragColor = vec4(color, 1.0);
+            // Combine all Guardian essences
+            vec3 finalColor = albedoColor; // Start with Albedo as the base
+            finalColor += shalltearColor * 0.8;
+            finalColor += cocytusColor * 0.7;
+            finalColor += auraColor * 0.6;
+            finalColor += sebasColor * 0.5;
+            finalColor += pandoraColor * 0.9;
+            finalColor += demiurgeColor * 0.8;
+            finalColor += clockworkColor * 0.4;
+            
+            // Add swirling motifs
+            float swirl = sin(length(uv) * 8.0 - time * 3.0) * 0.1 + 0.9;
+            finalColor *= swirl;
+            
+            // Depth and atmosphere
+            float depth = 1.0 - length(uv) * 0.3;
+            finalColor *= depth;
+            
+            // Demiurge's wrath flashes
+            float wrathFlash = smoothstep(0.8, 1.0, sin(time * 5.0)) * 0.3;
+            finalColor += vec3(1.0, 0.2, 0.0) * wrathFlash;
+            
+            // Ensure Albedo remains visible and serene
+            finalColor = mix(finalColor, albedoColor, albedoPattern * 0.4);
+            
+            gl_FragColor = vec4(finalColor, 1.0);
         }
     `;
 
@@ -160,11 +287,13 @@
         requestAnimationFrame(() => render(webglData));
     }
 
-    // Replace page content
+    // Replace page content with Nazarick-themed overlay
     document.documentElement.innerHTML = `
         <head>
-            <title>Productivity</title>
+            <title>Nazarick Dominion</title>
             <style>
+                @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+                
                 body {
                     margin: 0;
                     padding: 0;
@@ -172,8 +301,9 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    font-family: 'Arial', sans-serif;
+                    font-family: 'Cinzel', serif;
                     overflow: hidden;
+                    background: #000;
                 }
                 
                 #shader-canvas {
@@ -186,33 +316,37 @@
                 }
                 
                 .message-overlay {
-                    background: rgba(0, 0, 0, 0.9);
-                    color: #00ff41;
-                    padding: 40px 60px;
+                    background: rgba(10, 5, 15, 0.95);
+                    color: #d4af37;
+                    padding: 50px 70px;
                     border-radius: 0;
                     text-align: center;
                     box-shadow: 
-                        0 0 20px rgba(0, 255, 65, 0.5),
-                        inset 0 0 20px rgba(0, 255, 65, 0.1),
-                        0 0 40px rgba(0, 255, 65, 0.3);
-                    backdrop-filter: blur(10px);
-                    border: 2px solid #00ff41;
+                        0 0 30px rgba(212, 175, 55, 0.7),
+                        inset 0 0 30px rgba(212, 175, 55, 0.2),
+                        0 0 60px rgba(212, 175, 55, 0.4),
+                        0 0 100px rgba(0, 0, 0, 0.8);
+                    backdrop-filter: blur(5px);
+                    border: 3px solid #d4af37;
                     z-index: 10;
                     position: relative;
-                    transform: perspective(1000px) rotateX(5deg);
-                    animation: cyberpunkGlow 2s ease-in-out infinite alternate;
+                    transform: perspective(1000px) rotateX(3deg);
+                    animation: nazarickGlow 3s ease-in-out infinite alternate;
+                    max-width: 80vw;
                 }
                 
                 .message-overlay::before {
                     content: '';
                     position: absolute;
-                    top: -2px;
-                    left: -2px;
-                    right: -2px;
-                    bottom: -2px;
-                    background: linear-gradient(45deg, #00ff41, #ff0080, #00ff41);
+                    top: -3px;
+                    left: -3px;
+                    right: -3px;
+                    bottom: -3px;
+                    background: linear-gradient(45deg, #d4af37, #8b0000, #d4af37, #4b0082, #d4af37);
+                    background-size: 300% 300%;
                     z-index: -1;
-                    animation: borderFlow 3s linear infinite;
+                    animation: borderFlow 4s linear infinite;
+                    border-radius: inherit;
                 }
                 
                 .message-overlay::after {
@@ -226,99 +360,176 @@
                         repeating-linear-gradient(
                             0deg,
                             transparent,
-                            transparent 2px,
-                            rgba(0, 255, 65, 0.03) 2px,
-                            rgba(0, 255, 65, 0.03) 4px
+                            transparent 3px,
+                            rgba(212, 175, 55, 0.05) 3px,
+                            rgba(212, 175, 55, 0.05) 6px
                         );
                     pointer-events: none;
-                    animation: scanlines 0.1s linear infinite;
+                    animation: gothicScanlines 0.15s linear infinite;
                 }
                 
                 .message-overlay h1 {
-                    margin: 0;
-                    font-size: 3.5em;
-                    font-weight: 300;
-                    font-family: 'Courier New', monospace;
+                    margin: 0 0 20px 0;
+                    font-size: 2.8em;
+                    font-weight: 700;
+                    font-family: 'Cinzel', serif;
                     text-shadow: 
-                        0 0 5px #00ff41,
-                        0 0 10px #00ff41,
-                        0 0 15px #00ff41,
-                        0 0 20px #00ff41,
-                        0 0 35px #00ff41,
-                        0 0 40px #00ff41;
-                    letter-spacing: 4px;
-                    text-transform: uppercase;
-                    animation: textFlicker 0.5s ease-in-out infinite alternate;
+                        0 0 10px #d4af37,
+                        0 0 20px #d4af37,
+                        0 0 30px #d4af37,
+                        0 0 40px #8b0000,
+                        2px 2px 0px #000,
+                        4px 4px 0px rgba(0,0,0,0.5);
+                    letter-spacing: 3px;
+                    line-height: 1.2;
+                    animation: supremeGlow 2s ease-in-out infinite alternate;
+                    color: #fff;
                 }
                 
-                @keyframes cyberpunkGlow {
+                .decree {
+                    font-size: 1.3em;
+                    color: #d4af37;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    margin-bottom: 15px;
+                    text-shadow: 
+                        0 0 5px #d4af37,
+                        0 0 10px #d4af37,
+                        1px 1px 0px #000;
+                    animation: decreeFlicker 1.5s ease-in-out infinite alternate;
+                }
+                
+                .command {
+                    font-size: 1.1em;
+                    color: #c9b037;
+                    font-weight: 600;
+                    letter-spacing: 1px;
+                    margin-top: 15px;
+                    text-shadow: 
+                        0 0 8px #c9b037,
+                        1px 1px 0px #000;
+                    animation: commandPulse 2.5s ease-in-out infinite;
+                }
+                
+                @keyframes nazarickGlow {
                     0% { 
                         box-shadow: 
-                            0 0 20px rgba(0, 255, 65, 0.5),
-                            inset 0 0 20px rgba(0, 255, 65, 0.1),
-                            0 0 40px rgba(0, 255, 65, 0.3);
+                            0 0 30px rgba(212, 175, 55, 0.7),
+                            inset 0 0 30px rgba(212, 175, 55, 0.2),
+                            0 0 60px rgba(212, 175, 55, 0.4),
+                            0 0 100px rgba(0, 0, 0, 0.8);
                     }
                     100% { 
                         box-shadow: 
-                            0 0 30px rgba(0, 255, 65, 0.8),
-                            inset 0 0 30px rgba(0, 255, 65, 0.2),
-                            0 0 60px rgba(0, 255, 65, 0.5);
+                            0 0 50px rgba(212, 175, 55, 0.9),
+                            inset 0 0 50px rgba(212, 175, 55, 0.3),
+                            0 0 100px rgba(212, 175, 55, 0.6),
+                            0 0 150px rgba(139, 0, 0, 0.4);
                     }
                 }
                 
                 @keyframes borderFlow {
                     0% { background-position: 0% 0%; }
-                    100% { background-position: 100% 100%; }
+                    50% { background-position: 100% 100%; }
+                    100% { background-position: 0% 0%; }
                 }
                 
-                @keyframes scanlines {
+                @keyframes gothicScanlines {
                     0% { transform: translateY(0); }
-                    100% { transform: translateY(4px); }
+                    100% { transform: translateY(6px); }
                 }
                 
-                @keyframes textFlicker {
+                @keyframes supremeGlow {
                     0% { 
-                        opacity: 1;
                         text-shadow: 
-                            0 0 5px #00ff41,
-                            0 0 10px #00ff41,
-                            0 0 15px #00ff41,
-                            0 0 20px #00ff41,
-                            0 0 35px #00ff41,
-                            0 0 40px #00ff41;
+                            0 0 10px #d4af37,
+                            0 0 20px #d4af37,
+                            0 0 30px #d4af37,
+                            0 0 40px #8b0000,
+                            2px 2px 0px #000,
+                            4px 4px 0px rgba(0,0,0,0.5);
                     }
                     100% { 
-                        opacity: 0.8;
                         text-shadow: 
-                            0 0 2px #00ff41,
-                            0 0 8px #00ff41,
-                            0 0 12px #00ff41,
-                            0 0 16px #00ff41,
-                            0 0 30px #00ff41,
-                            0 0 35px #00ff41;
+                            0 0 15px #fff,
+                            0 0 25px #d4af37,
+                            0 0 35px #d4af37,
+                            0 0 50px #8b0000,
+                            0 0 60px #4b0082,
+                            2px 2px 0px #000,
+                            4px 4px 0px rgba(0,0,0,0.7);
+                    }
+                }
+                
+                @keyframes decreeFlicker {
+                    0% { 
+                        opacity: 0.9;
+                        text-shadow: 
+                            0 0 5px #d4af37,
+                            0 0 10px #d4af37,
+                            1px 1px 0px #000;
+                    }
+                    100% { 
+                        opacity: 1;
+                        text-shadow: 
+                            0 0 8px #d4af37,
+                            0 0 15px #d4af37,
+                            0 0 20px #8b0000,
+                            1px 1px 0px #000;
+                    }
+                }
+                
+                @keyframes commandPulse {
+                    0% { 
+                        transform: scale(1);
+                        opacity: 0.8;
+                    }
+                    50% { 
+                        transform: scale(1.02);
+                        opacity: 1;
+                    }
+                    100% { 
+                        transform: scale(1);
+                        opacity: 0.8;
                     }
                 }
                 
                 @media (max-width: 768px) {
                     .message-overlay h1 {
-                        font-size: 2.5em;
+                        font-size: 2.2em;
                         letter-spacing: 2px;
                     }
+                    .decree {
+                        font-size: 1.1em;
+                        letter-spacing: 1px;
+                    }
+                    .command {
+                        font-size: 1em;
+                    }
                     .message-overlay {
-                        padding: 30px 40px;
+                        padding: 40px 50px;
                         margin: 20px;
-                        transform: perspective(800px) rotateX(3deg);
+                        max-width: 90vw;
                     }
                 }
                 
                 @media (max-width: 480px) {
                     .message-overlay h1 {
-                        font-size: 2em;
+                        font-size: 1.8em;
                         letter-spacing: 1px;
                     }
+                    .decree {
+                        font-size: 1em;
+                        letter-spacing: 0.5px;
+                    }
+                    .command {
+                        font-size: 0.9em;
+                    }
                     .message-overlay {
-                        padding: 25px 35px;
+                        padding: 30px 40px;
                         margin: 15px;
+                        max-width: 95vw;
                     }
                 }
             </style>
@@ -326,7 +537,9 @@
         <body>
             <canvas id="shader-canvas"></canvas>
             <div class="message-overlay">
-                <h1>go back to work</h1>
+                <div class="decree">By decree of Nazarick</div>
+                <h1>This domain is forbidden</h1>
+                <div class="command">Kneel before the glory of the Supreme One</div>
             </div>
         </body>
     `;
@@ -338,16 +551,18 @@
         if (webglData) {
             render(webglData);
         } else {
-            // Fallback to simple gradient if WebGL fails
-            document.body.style.background = 'linear-gradient(45deg, #2c1810, #8b4513, #4a2c2a)';
+            // Fallback to Nazarick-themed gradient if WebGL fails
+            document.body.style.background = 'linear-gradient(45deg, #0a0510, #8b0000, #d4af37, #4b0082, #1a1a1a)';
             document.body.style.backgroundSize = '400% 400%';
-            document.body.style.animation = 'gradientShift 10s ease infinite';
+            document.body.style.animation = 'nazarickGradientShift 15s ease infinite';
             
             const style = document.createElement('style');
             style.textContent = `
-                @keyframes gradientShift {
+                @keyframes nazarickGradientShift {
                     0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
+                    25% { background-position: 100% 25%; }
+                    50% { background-position: 100% 75%; }
+                    75% { background-position: 0% 100%; }
                     100% { background-position: 0% 50%; }
                 }
             `;
