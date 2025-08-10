@@ -1,4 +1,4 @@
-name: Greetings
+name: Nazarick Greeting
 
 on: [pull_request_target, issues]
 
@@ -9,8 +9,20 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-    - uses: actions/first-interaction@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Message that will be displayed on users' first issue"
-        pr-message: "Message that will be displayed on users' first pull request"
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            🦴✨ Welcome, mortal, to the sacred repository of the Great Tomb of Nazarick! ✨🦴
+
+            You stand before a codebase watched over by Albedo, loyal guardian and angel of the Supreme Overlord, and the undying lich ruler themself. We cherish your first issue as a mark of courage and curiosity. 
+            
+            May your contribution honor the tomb and echo through eternity!  
+            
+            *"Those who serve with diligence and brilliance may one day bask in the glory of Nazarick."*
+          pr-message: |
+            💀👑 Hail, brave soul! You have opened your first pull request within the Great Tomb of Nazarick. 👑💀
+
+            Your efforts have drawn the gaze of Albedo and the Supreme Overlord. Take your time, for only code worthy of legends shall be merged. We value thoughtful craftsmanship over haste—let your work shine with the utmost brilliance and care.
+
+            *"The walls of Nazarick are built by the diligent and the devoted. Welcome to our immortal ranks."*
